@@ -8,10 +8,14 @@ function getRandom (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+getRandom();
+
 function chechMaxLength (check, maxLength) {
   if (check.length <= maxLength) {
     return true;
   }
   return false;
 }
+
+chechMaxLength();
 
