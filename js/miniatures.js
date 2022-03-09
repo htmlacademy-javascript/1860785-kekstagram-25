@@ -18,3 +18,5 @@ randomPhotoDescriptions.forEach((element) => {
 });
 
 picturesBlock.append(picturesFragment);
+
+export {randomPhotoDescriptions};
