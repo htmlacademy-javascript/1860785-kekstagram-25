@@ -31,15 +31,15 @@ for (let i = 0; i < pictures.length; i++) {
     bigPicture.querySelector('.comments-count').textContent = pictures[i].querySelector('.picture__comments').textContent;
     bigPicture.querySelector('.social__caption').textContent = randomPhotoDescriptions[i].description;
     bigPicture.querySelector('.social__comments').innerHTML = '';
-    randomPhotoDescriptions[i].comments.forEach((element) => {
+    randomPhotoDescriptions[i].comments.forEach(({avatar, name, message}) => {
       bigPicture.querySelector('.social__comments').insertAdjacentHTML('beforeend', `
       <li class="social__comment">
         <img
           class="social__picture"
-          src="${element.avatar}"
-          alt="${element.name}"
+          src="${avatar}"
+          alt="${name}"
           width="35" height="35">
-        <p class="social__text">${element.message}</p>
+        <p class="social__text">${message}</p>
       </li>`);
     });
   });
