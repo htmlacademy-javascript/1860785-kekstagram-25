@@ -9,12 +9,14 @@ const randomPhotoDescriptions = createPhotoDescriptions(COUNT_RANDOM_ELEMENTS);
 
 const picturesFragment = document.createDocumentFragment();
 
-randomPhotoDescriptions.forEach((element) => {
+randomPhotoDescriptions.forEach(({url, likes, comments}) => {
   const picture = templatePicture.cloneNode(true);
-  picture.querySelector('.picture__img').src = element.url;
-  picture.querySelector('.picture__likes').textContent = element.likes;
-  picture.querySelector('.picture__comments').textContent = element.comments.length;
+  picture.querySelector('.picture__img').src = url;
+  picture.querySelector('.picture__likes').textContent = likes;
+  picture.querySelector('.picture__comments').textContent = comments.length;
   picturesFragment.append(picture);
 });
 
 picturesBlock.append(picturesFragment);
+
+export {randomPhotoDescriptions};
