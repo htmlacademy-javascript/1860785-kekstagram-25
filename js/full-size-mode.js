@@ -19,28 +19,32 @@ document.addEventListener('keydown', (evt) => {
   }
 });
 
-for (let i = 0; i < pictures.length; i++) {
-  pictures[i].addEventListener('click', (evt) => {
-    evt.preventDefault();
-    bigPicture.classList.remove('hidden');
-    body.classList.add('modal-open');
-    socialCommentCount.classList.add('hidden');
-    commentsLoader.classList.add('hidden');
-    bigPicture.querySelector('img').src = pictures[i].querySelector('.picture__img').src;
-    bigPicture.querySelector('.likes-count').textContent = pictures[i].querySelector('.picture__likes').textContent;
-    bigPicture.querySelector('.comments-count').textContent = pictures[i].querySelector('.picture__comments').textContent;
-    bigPicture.querySelector('.social__caption').textContent = randomPhotoDescriptions[i].description;
-    bigPicture.querySelector('.social__comments').innerHTML = '';
-    randomPhotoDescriptions[i].comments.forEach(({avatar, name, message}) => {
-      bigPicture.querySelector('.social__comments').insertAdjacentHTML('beforeend', `
-      <li class="social__comment">
-        <img
-          class="social__picture"
-          src="${avatar}"
-          alt="${name}"
-          width="35" height="35">
-        <p class="social__text">${message}</p>
-      </li>`);
+const addFullSizeMode = () => {
+  for (let i = 0; i < pictures.length; i++) {
+    pictures[i].addEventListener('click', (evt) => {
+      evt.preventDefault();
+      bigPicture.classList.remove('hidden');
+      body.classList.add('modal-open');
+      socialCommentCount.classList.add('hidden');
+      commentsLoader.classList.add('hidden');
+      bigPicture.querySelector('img').src = pictures[i].querySelector('.picture__img').src;
+      bigPicture.querySelector('.likes-count').textContent = pictures[i].querySelector('.picture__likes').textContent;
+      bigPicture.querySelector('.comments-count').textContent = pictures[i].querySelector('.picture__comments').textContent;
+      bigPicture.querySelector('.social__caption').textContent = randomPhotoDescriptions[i].description;
+      bigPicture.querySelector('.social__comments').innerHTML = '';
+      randomPhotoDescriptions[i].comments.forEach(({avatar, name, message}) => {
+        bigPicture.querySelector('.social__comments').insertAdjacentHTML('beforeend', `
+        <li class="social__comment">
+          <img
+            class="social__picture"
+            src="${avatar}"
+            alt="${name}"
+            width="35" height="35">
+          <p class="social__text">${message}</p>
+        </li>`);
+      });
     });
-  });
-}
+  }
+};
+
+addFullSizeMode();
