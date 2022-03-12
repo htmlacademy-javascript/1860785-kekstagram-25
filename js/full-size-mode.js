@@ -1,4 +1,5 @@
 import {randomPhotoDescriptions} from './miniatures.js';
+import {isEscapeKey} from './util.js';
 
 const pictures = document.querySelectorAll('.picture');
 const bigPicture = document.querySelector('.big-picture');
@@ -7,17 +8,22 @@ const body = document.querySelector('body');
 const socialCommentCount = document.querySelector('.social__comment-count');
 const commentsLoader = document.querySelector('.comments-loader');
 
-pictureCancel.addEventListener('click', () => {
+function closeBigPicture () {
   bigPicture.classList.add('hidden');
   body.classList.remove('modal-open');
-});
+  pictureCancel.removeEventListener('click', closeBigPictureOnClick);
+  document.removeEventListener('keydown', closeBigPictureOnKeydown);
+}
 
-document.addEventListener('keydown', (evt) => {
-  if (evt.keyCode === 27) {
-    bigPicture.classList.add('hidden');
-    body.classList.remove('modal-open');
+function closeBigPictureOnClick () {
+  closeBigPicture();
+}
+
+function closeBigPictureOnKeydown (evt) {
+  if (isEscapeKey(evt)) {
+    closeBigPicture();
   }
-});
+}
 
 const addFullSizeMode = () => {
   for (let i = 0; i < pictures.length; i++) {
@@ -27,6 +33,8 @@ const addFullSizeMode = () => {
       body.classList.add('modal-open');
       socialCommentCount.classList.add('hidden');
       commentsLoader.classList.add('hidden');
+      pictureCancel.addEventListener('click', closeBigPictureOnClick);
+      document.addEventListener('keydown', closeBigPictureOnKeydown);
       bigPicture.querySelector('img').src = pictures[i].querySelector('.picture__img').src;
       bigPicture.querySelector('.likes-count').textContent = pictures[i].querySelector('.picture__likes').textContent;
       bigPicture.querySelector('.comments-count').textContent = pictures[i].querySelector('.picture__comments').textContent;
