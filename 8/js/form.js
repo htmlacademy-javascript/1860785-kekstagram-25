@@ -62,6 +62,7 @@ const closeForm = () => {
   uploadCancel.removeEventListener('click', closeFormOnClick);
   document.removeEventListener('keydown', closeFormOnKeydown);
   form.removeEventListener('submit', validateForm);
+  pristine.reset();
 };
 
 function closeFormOnClick () {
