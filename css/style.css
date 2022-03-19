@@ -1403,3 +1403,25 @@ main {
 .hidden {
   display: none;
 }
+
+.form-group {
+  position: relative;
+}
+
+.has-success .form-control {
+  border: 2px solid #168b3f;
+}
+
+.has-danger .form-control {
+  border: 2px solid #dc1d34;
+}
+
+.form-group .text-help {
+  position: absolute;
+  color: rgb(255, 255, 255);
+  text-transform: initial;
+  width: max-content;
+  top: 33px;
+  left: 50%;
+  transform: translateX(-50%);
+}
