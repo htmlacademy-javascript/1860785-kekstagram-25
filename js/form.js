@@ -69,8 +69,8 @@ function closeFormOnClick () {
   closeForm();
 }
 
-function closeFormOnKeydown () {
-  if (isEscapeKey && document.activeElement !== textDescription && document.activeElement !== textHashtags) {
+function closeFormOnKeydown (evt) {
+  if (isEscapeKey(evt) && document.activeElement !== textDescription && document.activeElement !== textHashtags) {
     closeForm();
     form.reset();
   }

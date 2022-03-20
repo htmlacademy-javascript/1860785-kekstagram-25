@@ -14,7 +14,7 @@ const DESCRIPTIONS = [
 const DESCRIPTIONS_LIKES_MIN = 15;
 const DESCRIPTIONS_LIKES_MAX = 200;
 
-const COMMENTS_ID_MAX = 100;
+const COMMENTS_ID_MAX = 800;
 
 const COMMENTS_AVATARS_MAX = 6;
 
@@ -41,7 +41,7 @@ const COMMENTS_NAMES = [
 ];
 
 const COMMENTS_MIN = 0;
-const COMMENTS_MAX = 3;
+const COMMENTS_MAX = 50;
 
 const getNumbersArray = (min, max) => {
   const numbers = [];
