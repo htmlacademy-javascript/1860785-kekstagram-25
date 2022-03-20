@@ -7,6 +7,10 @@ const uploadFile = form.querySelector('#upload-file');
 const uploadCancel = form.querySelector('#upload-cancel');
 const textHashtags = form.querySelector('.text__hashtags');
 const textDescription = form.querySelector('.text__description');
+const scaleControlSmaller = form.querySelector('.scale__control--smaller');
+const scaleControlBigger = form.querySelector('.scale__control--bigger');
+const scaleControlValue = form.querySelector('.scale__control--value');
+const imgUploadPreview = form.querySelector('.img-upload__preview');
 const regularExpression = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 
 const pristine = new Pristine(form);
@@ -48,9 +52,36 @@ function validateForm (evt) {
   }
 }
 
+function makeScaleSmaller () {
+  let scaleControlNumberValue = scaleControlValue.value.slice(0, scaleControlValue.value.length - 1);
+  scaleControlNumberValue = Number(scaleControlNumberValue);
+  scaleControlNumberValue -= 25;
+  if (scaleControlNumberValue >= 25) {
+    scaleControlValue.value = `${scaleControlNumberValue}%`;
+    imgUploadPreview.firstElementChild.style.transform=`scale(0.${scaleControlNumberValue})`;
+  } else {
+    scaleControlValue.value = '25%';
+  }
+}
+
+function makeScaleBigger () {
+  let scaleControlNumberValue = scaleControlValue.value.slice(0, scaleControlValue.value.length - 1);
+  scaleControlNumberValue = Number(scaleControlNumberValue);
+  scaleControlNumberValue += 25;
+  if (scaleControlNumberValue < 100) {
+    scaleControlValue.value = `${scaleControlNumberValue}%`;
+    imgUploadPreview.firstElementChild.style.transform=`scale(0.${scaleControlNumberValue})`;
+  } else {
+    scaleControlValue.value = '100%';
+    imgUploadPreview.firstElementChild.style.transform='scale(1)';
+  }
+}
+
 uploadFile.addEventListener('change', () => {
   imgUploadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
+  scaleControlSmaller.addEventListener('click', makeScaleSmaller);
+  scaleControlBigger.addEventListener('click', makeScaleBigger);
   uploadCancel.addEventListener('click', closeFormOnClick);
   document.addEventListener('keydown', closeFormOnKeydown);
   form.addEventListener('submit', validateForm);
@@ -59,9 +90,12 @@ uploadFile.addEventListener('change', () => {
 const closeForm = () => {
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
+  scaleControlSmaller.removeEventListener('click', makeScaleSmaller);
+  scaleControlBigger.removeEventListener('click', makeScaleBigger);
   uploadCancel.removeEventListener('click', closeFormOnClick);
   document.removeEventListener('keydown', closeFormOnKeydown);
   form.removeEventListener('submit', validateForm);
+  imgUploadPreview.firstElementChild.removeAttribute('style');
   pristine.reset();
 };
 
