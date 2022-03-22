@@ -6,13 +6,13 @@ const NUBER_COMMENTS_DISPLAYED = 5;
 const pictures = document.querySelectorAll('.picture');
 const bigPicture = document.querySelector('.big-picture');
 const body = document.querySelector('body');
+const pictureContainer = document.querySelector('.pictures');
 const pictureCancel = bigPicture.querySelector('#picture-cancel');
 const socialCommentCount = bigPicture.querySelector('.social__comment-count');
 const commentsLoader = bigPicture.querySelector('.comments-loader');
 const partCommentsCount = socialCommentCount.querySelector('.part-comments-count');
 const commentsCount = socialCommentCount.querySelector('.comments-count');
 const commentsText = socialCommentCount.querySelector('.comments-text');
-const pictureContainer = document.querySelector('.pictures');
 
 function closeBigPicture () {
   bigPicture.classList.add('hidden');
@@ -45,7 +45,7 @@ function addComments () {
       numberAddedComments += 1;
     }
   }
-  partCommentsCount.textContent = +partCommentsCount.textContent + numberAddedComments;
+  partCommentsCount.textContent = Number(partCommentsCount.textContent) + numberAddedComments;
   if (hiddenComments.length <= NUBER_COMMENTS_DISPLAYED) {
     commentsLoader.classList.add('hidden');
   }
@@ -81,8 +81,8 @@ function openFullSizeMode (evt) {
         </li>`);
     });
     const comments = bigPicture.querySelectorAll('.social__comment');
-    if (+commentsCount.textContent[commentsCount.textContent.length - 1] === 1 &&
-        +commentsCount.textContent[commentsCount.textContent.length - 2] !== 1) {
+    if (Number(commentsCount.textContent[commentsCount.textContent.length - 1]) === 1 &&
+        Number(commentsCount.textContent[commentsCount.textContent.length - 2]) !== 1) {
       commentsText.textContent = ' комментария';
     } else {
       commentsText.textContent = ' комментариев';
