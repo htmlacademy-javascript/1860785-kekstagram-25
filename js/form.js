@@ -1,4 +1,5 @@
 import {isEscapeKey} from './util.js';
+import {setData} from './server.js';
 
 const MAX_HASHTAGS_NUMBER = 5;
 const MIN_SCALE_CONTROL = 25;
@@ -20,6 +21,7 @@ const effectLevelSlider = form.querySelector('.effect-level__slider');
 const effectLevelValue = form.querySelector('.effect-level__value');
 const effectNoneInput = form.querySelector('#effect-none');
 const selectedImg = form.querySelector('img');
+const submitButton = form.querySelector('.img-upload__submit');
 const selectedImgClassListIndex = selectedImg.classList.length;
 const regularExpression = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 
@@ -56,14 +58,7 @@ pristine.addValidator(textHashtags, () => {
   return true;
 }, 'Хэш-теги не должны повторяться независимо от регистра', 3, true);
 
-const validateForm = (evt) => {
-  const isValid = pristine.validate();
-  if (!isValid) {
-    evt.preventDefault();
-  }
-};
-
-const makeScaleSmaller = () => {
+const onScaleControlSmallerClick = () => {
   let scaleControlNumberValue = scaleControlValue.value.slice(0, scaleControlValue.value.length - 1);
   scaleControlNumberValue = Number(scaleControlNumberValue);
   scaleControlNumberValue -= SCALE_CONTROL_STEP;
@@ -75,7 +70,7 @@ const makeScaleSmaller = () => {
   }
 };
 
-const makeScaleBigger = () => {
+const onScaleControlBiggerClick = () => {
   let scaleControlNumberValue = scaleControlValue.value.slice(0, scaleControlValue.value.length - 1);
   scaleControlNumberValue = Number(scaleControlNumberValue);
   scaleControlNumberValue += SCALE_CONTROL_STEP;
@@ -130,12 +125,17 @@ const getSliderValue = () => {
   }
 };
 
-const applyEffect = (evt) => {
+const onEffectsItemClick = (evt) => {
   if (evt.target.closest('.effects__preview')) {
     if (selectedImg.classList.length > selectedImgClassListIndex) {
       selectedImg.classList.remove(selectedImg.classList[selectedImgClassListIndex]);
     }
-    selectedImg.classList.add(evt.target.classList[1]);
+
+    evt.target.classList.forEach((item) => {
+      if (item.includes('effects__preview--')) {
+        selectedImg.classList.add(item);
+      }
+    });
 
     switch (selectedImg.classList[selectedImgClassListIndex]) {
 
@@ -207,47 +207,159 @@ const applyEffect = (evt) => {
   }
 };
 
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Публикую...';
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Опубликовать';
+};
+
+const onSuccess = () => {
+
+  unblockSubmitButton();
+  closeForm();
+
+  body.insertAdjacentHTML('beforeend', `
+    <section class="success">
+      <div class="success__inner">
+        <h2 class="success__title">Изображение успешно загружено</h2>
+        <button type="button" class="success__button">Круто!</button>
+      </div>
+    </section>`);
+
+  const successSection = body.querySelector('.success');
+  const successMessage = successSection.querySelector('.success__inner');
+  const successButton = successMessage.querySelector('.success__button');
+
+  const onSuccessButtonClick = () => {
+    closeSuccessMessage();
+  };
+
+  const onSuccessMessageEscKeydown = (evt) => {
+    if (isEscapeKey(evt)) {
+      closeSuccessMessage();
+    }
+  };
+
+  const onSuccessSectionClick = (evt) => {
+    if (evt.target === successSection) {
+      closeSuccessMessage();
+    }
+  };
+
+  successButton.addEventListener('click', onSuccessButtonClick);
+  successSection.addEventListener('click', onSuccessSectionClick);
+  document.addEventListener('keydown', onSuccessMessageEscKeydown);
+
+  function closeSuccessMessage () {
+    successSection.remove();
+    successSection.removeEventListener('click', onSuccessSectionClick);
+    document.removeEventListener('keydown', onSuccessMessageEscKeydown);
+    form.reset();
+  }
+};
+
+const onFailure = () => {
+
+  unblockSubmitButton();
+  closeForm();
+
+  body.insertAdjacentHTML('beforeend', `
+    <section class="error">
+      <div class="error__inner">
+        <h2 class="error__title">Ошибка загрузки файла</h2>
+        <button type="button" class="error__button">Загрузить другой файл</button>
+      </div>
+    </section>`);
+
+  const errorSection = body.querySelector('.error');
+  const errorMessage = errorSection.querySelector('.error__inner');
+  const errorButton = errorMessage.querySelector('.error__button');
+
+  const onErrorButtonClick = () => {
+    closeErrorMessage();
+  };
+
+  const onDocumentEscKeydown = (evt) => {
+    if (isEscapeKey(evt)) {
+      closeErrorMessage();
+    }
+  };
+
+  const onErrorSectionClick = (evt) => {
+    if (evt.target === errorSection) {
+      closeErrorMessage();
+    }
+  };
+
+  errorButton.addEventListener('click', onErrorButtonClick);
+  errorSection.addEventListener('click', onErrorSectionClick);
+  document.addEventListener('keydown', onDocumentEscKeydown);
+
+  function closeErrorMessage () {
+    errorSection.remove();
+    errorSection.removeEventListener('click', onErrorSectionClick);
+    document.removeEventListener('keydown', onDocumentEscKeydown);
+    form.reset();
+  }
+};
+
+const onFormSubmit = (evt) => {
+  evt.preventDefault();
+
+  const isValid = pristine.validate();
+  if (isValid) {
+    blockSubmitButton();
+    setData(onSuccess, onFailure, new FormData(evt.target));
+  }
+};
+
 uploadFile.addEventListener('change', () => {
   imgUploadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
   scaleControlValue.value = `${MAX_SCALE_CONTROL}%`;
   selectedImg.style.transform=`scale(${MAX_SCALE_CONTROL / 100})`;
-  scaleControlSmaller.addEventListener('click', makeScaleSmaller);
-  scaleControlBigger.addEventListener('click', makeScaleBigger);
+  scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
+  scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
   if (effectNoneInput.checked) {
     effectLevelSlider.classList.add('hidden');
   }
   effectLevelSlider.noUiSlider.on('update', getSliderValue);
-  effectsList.addEventListener('click', applyEffect);
-  uploadCancel.addEventListener('click', closeFormOnClick);
-  document.addEventListener('keydown', closeFormOnKeydown);
-  form.addEventListener('submit', validateForm);
+  effectsList.addEventListener('click', onEffectsItemClick);
+  uploadCancel.addEventListener('click', onUploadCancelClick);
+  document.addEventListener('keydown', onFormEscKeydown);
+  form.addEventListener('submit', onFormSubmit);
 });
 
-const closeForm = () => {
+function closeForm () {
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
-  scaleControlSmaller.removeEventListener('click', makeScaleSmaller);
-  scaleControlBigger.removeEventListener('click', makeScaleBigger);
+  scaleControlSmaller.removeEventListener('click', onScaleControlSmallerClick);
+  scaleControlBigger.removeEventListener('click', onScaleControlBiggerClick);
   effectLevelSlider.noUiSlider.off();
-  effectsList.removeEventListener('click', applyEffect);
-  uploadCancel.removeEventListener('click', closeFormOnClick);
-  document.removeEventListener('keydown', closeFormOnKeydown);
-  form.removeEventListener('submit', validateForm);
+  effectsList.removeEventListener('click', onEffectsItemClick);
+  uploadCancel.removeEventListener('click', onUploadCancelClick);
+  document.removeEventListener('keydown', onFormEscKeydown);
+  form.removeEventListener('submit', onFormSubmit);
   if (selectedImg.classList.length > selectedImgClassListIndex) {
     selectedImg.classList.remove(selectedImg.classList[selectedImgClassListIndex]);
   }
   selectedImg.removeAttribute('style');
   pristine.reset();
-};
+}
 
-function closeFormOnClick () {
+function onUploadCancelClick () {
   closeForm();
 }
 
-function closeFormOnKeydown (evt) {
+function onFormEscKeydown (evt) {
   if (isEscapeKey(evt) && document.activeElement !== textDescription && document.activeElement !== textHashtags) {
     closeForm();
     form.reset();
   }
 }
+
+export {onSuccess, onFailure};
