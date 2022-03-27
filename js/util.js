@@ -1,4 +1,4 @@
-const checkMaxLength = (check, maxLength) => {
+/* const checkMaxLength = (check, maxLength) => {
   if (check.length <= maxLength) {
     return true;
   }
@@ -17,8 +17,8 @@ const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getRandomArrayElement = (elements) => elements[getRandom(0, elements.length - 1)];
+const getRandomArrayElement = (elements) => elements[getRandom(0, elements.length - 1)]; */
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandom, getRandomArrayElement, isEscapeKey};
+export {isEscapeKey};
