@@ -1,4 +1,4 @@
-import {getRandom, getRandomArrayElement} from './util.js';
+/* import {getRandom, getRandomArrayElement} from './util.js';
 
 const DESCRIPTIONS_ID_MAX = 25;
 
@@ -88,4 +88,4 @@ const createPhotoDescriptions = (amount) => {
   return photos;
 };
 
-export {createPhotoDescriptions};
+export {createPhotoDescriptions}; */
