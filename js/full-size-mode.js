@@ -1,11 +1,10 @@
-import {addThumbnails} from './miniatures.js';
 import {isEscapeKey} from './util.js';
-import {getData} from './server.js';
 
 const NUMBER_COMMENTS_DISPLAYED = 5;
 
 const bigPicture = document.querySelector('.big-picture');
 const body = document.querySelector('body');
+const imgFiltersForm = body.querySelector('.img-filters__form');
 const pictureContainer = document.querySelector('.pictures');
 const pictureCancel = bigPicture.querySelector('#picture-cancel');
 const socialCommentCount = bigPicture.querySelector('.social__comment-count');
@@ -16,6 +15,14 @@ const partCommentsCount = socialCommentCount.querySelector('.part-comments-count
 const commentsCount = socialCommentCount.querySelector('.comments-count');
 const commentsText = socialCommentCount.querySelector('.comments-text');
 
+
+let onPictureClickVariable;
+
+imgFiltersForm.addEventListener('click', (evt) => {
+  if (evt.target.matches('button')) {
+    pictureContainer.removeEventListener('click', onPictureClickVariable);
+  }
+});
 
 const openFullSizeMode = (data) => {
 
@@ -78,6 +85,8 @@ const openFullSizeMode = (data) => {
       commentsLoader.addEventListener('click', onCommentsLoaderClick);
     }
   };
+
+  onPictureClickVariable = onPictureClick;
 
   function onLikesCountClick () {
     likesCount.classList.toggle('likes-count--active');
@@ -184,4 +193,4 @@ const onFailure = () => {
   }
 };
 
-getData(addThumbnails, openFullSizeMode, onFailure);
+export {openFullSizeMode, onFailure};

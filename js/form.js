@@ -139,11 +139,6 @@ const onEffectsItemClick = (evt) => {
 
     switch (selectedImg.classList[selectedImgClassListIndex]) {
 
-      case 'effects__preview--none':
-        effectLevelSlider.classList.add('hidden');
-        selectedImg.style.filter='';
-        break;
-
       case 'effects__preview--chrome':
         effectLevelSlider.classList.remove('hidden');
         effectLevelSlider.noUiSlider.updateOptions({
@@ -203,6 +198,10 @@ const onEffectsItemClick = (evt) => {
           step: 0.1,
         });
         break;
+
+      default:
+        effectLevelSlider.classList.add('hidden');
+        selectedImg.style.filter='';
     }
   }
 };

@@ -1,9 +1,11 @@
-const getData = (onSucsessFirst, onSucsessSecond, onFailure) => {
-  fetch('https://25.javascript.pages.academy/kekstagram/data')
+const GET_URL = 'https://25.javascript.pages.academy/kekstagram/data';
+const POST_URL = 'https://25.javascript.pages.academy/kekstagram';
+
+const getData = (onSucsess, onFailure) => {
+  fetch(GET_URL)
     .then((response) => response.json())
     .then((data) => {
-      onSucsessFirst(data);
-      onSucsessSecond(data);
+      onSucsess(data);
     })
     .catch(() => {
       onFailure();
@@ -11,7 +13,7 @@ const getData = (onSucsessFirst, onSucsessSecond, onFailure) => {
 };
 
 const setData = (onSuccess, onFailure, body) => {
-  fetch('https://25.javascript.pages.academy/kekstagram', {
+  fetch(POST_URL, {
     method: 'POST',
     body,
   })
