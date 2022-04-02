@@ -1,6 +1,7 @@
 import {isEscapeKey} from './util.js';
 import {setData} from './server.js';
 
+const AVAILABLE_FILE_TYPES = ['jpeg', 'jpg', 'png'];
 const MAX_HASHTAGS_NUMBER = 5;
 const MIN_SCALE_CONTROL = 25;
 const MAX_SCALE_CONTROL = 100;
@@ -319,6 +320,12 @@ const onFormSubmit = (evt) => {
 uploadFile.addEventListener('change', () => {
   imgUploadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = AVAILABLE_FILE_TYPES.some((it) => fileName.endsWith(it));
+  if (matches) {
+    selectedImg.src = URL.createObjectURL(file);
+  }
   scaleControlValue.value = `${MAX_SCALE_CONTROL}%`;
   selectedImg.style.transform=`scale(${MAX_SCALE_CONTROL / 100})`;
   scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
