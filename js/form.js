@@ -27,7 +27,7 @@ const selectedImgClassListIndex = selectedImg.classList.length;
 const regularExpression = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 
 
-const pristine = new Pristine(form);
+const pristine = window.Pristine(form);
 
 pristine.addValidator(textHashtags, () => {
   const arrayHashtags = textHashtags.value.split(' ');
@@ -262,7 +262,7 @@ const onSuccess = () => {
   }
 };
 
-const onFailure = () => {
+const onError = () => {
 
   unblockSubmitButton();
   closeForm();
@@ -283,7 +283,7 @@ const onFailure = () => {
     closeErrorMessage();
   };
 
-  const onDocumentEscKeydown = (evt) => {
+  const onErrorMessageEscKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       closeErrorMessage();
     }
@@ -297,12 +297,12 @@ const onFailure = () => {
 
   errorButton.addEventListener('click', onErrorButtonClick);
   errorSection.addEventListener('click', onErrorSectionClick);
-  document.addEventListener('keydown', onDocumentEscKeydown);
+  document.addEventListener('keydown', onErrorMessageEscKeydown);
 
   function closeErrorMessage () {
     errorSection.remove();
     errorSection.removeEventListener('click', onErrorSectionClick);
-    document.removeEventListener('keydown', onDocumentEscKeydown);
+    document.removeEventListener('keydown', onErrorMessageEscKeydown);
     form.reset();
   }
 };
@@ -313,11 +313,15 @@ const onFormSubmit = (evt) => {
   const isValid = pristine.validate();
   if (isValid) {
     blockSubmitButton();
-    setData(onSuccess, onFailure, new FormData(evt.target));
+    setData(onSuccess, onError, new FormData(evt.target));
   }
 };
 
 uploadFile.addEventListener('change', () => {
+  if (body.clientWidth !== window.innerWidth) {
+    const scrollbarWidth = window.innerWidth - body.clientWidth;
+    body.style.paddingRight = `${scrollbarWidth}px`;
+  }
   imgUploadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
   const file = uploadFile.files[0];
@@ -343,6 +347,7 @@ uploadFile.addEventListener('change', () => {
 function closeForm () {
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
+  body.style.paddingRight = '';
   scaleControlSmaller.removeEventListener('click', onScaleControlSmallerClick);
   scaleControlBigger.removeEventListener('click', onScaleControlBiggerClick);
   effectLevelSlider.noUiSlider.off();
@@ -367,5 +372,3 @@ function onFormEscKeydown (evt) {
     form.reset();
   }
 }
-
-export {onSuccess, onFailure};
