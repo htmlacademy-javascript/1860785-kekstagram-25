@@ -24,12 +24,16 @@ imgFiltersForm.addEventListener('click', (evt) => {
   }
 });
 
-const openFullSizeMode = (data) => {
+const setFullSizeModeClick = (data) => {
 
   const pictures = document.querySelectorAll('.picture');
 
   const onPictureClick = (evt) => {
     if (evt.target.matches('img.picture__img')) {
+      if (body.clientWidth !== window.innerWidth) {
+        const scrollbarWidth = window.innerWidth - body.clientWidth;
+        body.style.paddingRight = `${scrollbarWidth}px`;
+      }
       bigPicture.classList.remove('hidden');
       body.classList.add('modal-open');
       pictureCancel.addEventListener('click', onPictureCancelClick);
@@ -64,7 +68,7 @@ const openFullSizeMode = (data) => {
       });
       const comments = bigPicture.querySelectorAll('.social__comment');
       if (Number(commentsCount.textContent[commentsCount.textContent.length - 1]) === 1 &&
-            Number(commentsCount.textContent[commentsCount.textContent.length - 2]) !== 1) {
+          Number(commentsCount.textContent[commentsCount.textContent.length - 2]) !== 1) {
         commentsText.textContent = ' комментария';
       } else {
         commentsText.textContent = ' комментариев';
@@ -133,6 +137,7 @@ const openFullSizeMode = (data) => {
   const closeBigPicture = () => {
     bigPicture.classList.add('hidden');
     body.classList.remove('modal-open');
+    body.style.paddingRight = '';
     partCommentsCount.textContent = 0;
     if (commentsLoader.classList.contains('hidden')) {
       commentsLoader.classList.remove('hidden');
@@ -152,45 +157,4 @@ const openFullSizeMode = (data) => {
   }
 };
 
-const onFailure = () => {
-
-  body.insertAdjacentHTML('beforeend', `
-    <section class="error">
-      <div class="error__inner">
-        <h2 class="error__title">Ошибка загрузки данных с сервера</h2>
-        <button type="button" class="error__button">Жаль:(</button>
-      </div>
-    </section>`);
-
-  const errorSection = body.querySelector('.error');
-  const errorMessage = errorSection.querySelector('.error__inner');
-  const errorButton = errorMessage.querySelector('.error__button');
-
-  const onErrorButtonClick = () => {
-    closeErrorMessage();
-  };
-
-  const onDocumentEscKeydown = (evt) => {
-    if (isEscapeKey(evt)) {
-      closeErrorMessage();
-    }
-  };
-
-  const onErrorSectionClick = (evt) => {
-    if (evt.target === errorSection) {
-      closeErrorMessage();
-    }
-  };
-
-  errorButton.addEventListener('click', onErrorButtonClick);
-  errorSection.addEventListener('click', onErrorSectionClick);
-  document.addEventListener('keydown', onDocumentEscKeydown);
-
-  function closeErrorMessage () {
-    errorSection.remove();
-    errorSection.removeEventListener('click', onErrorSectionClick);
-    document.removeEventListener('keydown', onDocumentEscKeydown);
-  }
-};
-
-export {openFullSizeMode, onFailure};
+export {setFullSizeModeClick};

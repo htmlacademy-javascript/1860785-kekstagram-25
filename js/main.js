@@ -1,6 +1,5 @@
 import './form.js';
-import {renderMiniatures} from './miniatures.js';
-import {onFailure} from './full-size-mode.js';
+import {renderMiniatures, onErrorDataDownload} from './miniatures.js';
 import {getData} from './server.js';
 
-getData(renderMiniatures, onFailure);
+getData(renderMiniatures, onErrorDataDownload);
