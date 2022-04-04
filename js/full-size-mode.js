@@ -48,7 +48,8 @@ const setFullSizeModeClick = (data) => {
           }
         }
       };
-      if (Number(evt.target.parentElement.querySelector('.picture__likes').textContent) > data[getElementNumber()].likes) {
+      if (Number(evt.target.parentElement.querySelector('.picture__likes').textContent) > data[getElementNumber()].likes ||
+          evt.target.parentElement.querySelector('.picture__likes').classList.contains('picture__likes-added')) {
         likesCount.classList.add('likes-count--active');
       } else {
         likesCount.classList.remove('likes-count--active');
