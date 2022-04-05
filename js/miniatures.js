@@ -16,28 +16,16 @@ const picturesFragment = document.createDocumentFragment();
 
 const renderMiniatures = (photoDescriptions) => {
 
-  photoDescriptions.forEach((item) => {
-    item.liked = false;
-    item.hidden = false;
-  });
-
   const toRender = (data) => {
     document.querySelectorAll('.picture').forEach((item) => {
       item.remove();
     });
-    data.forEach((item) => {
+    data.forEach(({url, likes, comments}) => {
       const picture = templatePicture.cloneNode(true);
-      if (!item.hidden) {
-        picture.querySelector('.picture__img').src = item.url;
-        if (item.liked) {
-          picture.querySelector('.picture__likes').textContent = item.likes + 1;
-          picture.querySelector('.picture__likes').classList.add('picture__likes-added');
-        } else {
-          picture.querySelector('.picture__likes').textContent = item.likes;
-        }
-        picture.querySelector('.picture__comments').textContent = item.comments.length;
-        picturesFragment.append(picture);
-      }
+      picture.querySelector('.picture__img').src = url;
+      picture.querySelector('.picture__likes').textContent = likes;
+      picture.querySelector('.picture__comments').textContent = comments.length;
+      picturesFragment.append(picture);
     });
     picturesBlock.append(picturesFragment);
     setFullSizeModeClick(data);
@@ -46,21 +34,7 @@ const renderMiniatures = (photoDescriptions) => {
   toRender(photoDescriptions);
   imgFiltersContainer.classList.remove('img-filters--inactive');
 
-  const syncLikes = () => {
-    const picturesLikes = document.querySelectorAll('.picture__likes');
-    photoDescriptions.forEach((item) => {
-      if (item.hidden) {
-        item.hidden = false;
-      }
-    });
-    picturesLikes.forEach((item, i) => {
-      if (item.classList.contains('picture__likes-added')) {
-        photoDescriptions[i].liked = true;
-      } else {
-        photoDescriptions[i].liked = false;
-      }
-    });
-  };
+  let filteredData;
 
   const setFilterClick = (cb) => {
     imgFiltersForm.addEventListener('click', (evt) => {
@@ -76,8 +50,7 @@ const renderMiniatures = (photoDescriptions) => {
         if (!evt.target.classList.contains('img-filters__button--active')) {
           removeActivityHighlight();
           evt.target.classList.add('img-filters__button--active');
-          syncLikes();
-          photoDescriptions.sort((a, b) => a.id - b.id);
+          filteredData = photoDescriptions;
           cb();
         } else {
           setFullSizeModeClick(photoDescriptions);
@@ -86,28 +59,23 @@ const renderMiniatures = (photoDescriptions) => {
       if (evt.target.matches('button#filter-random')) {
         removeActivityHighlight();
         evt.target.classList.add('img-filters__button--active');
-        syncLikes();
-        photoDescriptions.sort(() => Math.random() - 0.5);
-        for (let i = photoDescriptions.length - 1; i >= RANDOM_MINIATURES_NUMBER; i--) {
-          photoDescriptions[i].hidden = true;
-        }
+        filteredData = photoDescriptions.slice().sort(() => Math.random() - 0.5).splice(0, RANDOM_MINIATURES_NUMBER);
         cb();
       }
       if (evt.target.matches('button#filter-discussed')) {
         if (!evt.target.classList.contains('img-filters__button--active')) {
           removeActivityHighlight();
           evt.target.classList.add('img-filters__button--active');
-          syncLikes();
-          photoDescriptions.sort((a, b) => b.comments.length - a.comments.length);
+          filteredData = photoDescriptions.slice().sort((a, b) => b.comments.length - a.comments.length);
           cb();
         } else {
-          setFullSizeModeClick(photoDescriptions);
+          setFullSizeModeClick(filteredData);
         }
       }
     });
   };
 
-  setFilterClick(debounce(() => toRender(photoDescriptions), RENDER_DELAY));
+  setFilterClick(debounce(() => toRender(filteredData), RENDER_DELAY));
 };
 
 const onErrorDataDownload = () => {

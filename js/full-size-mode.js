@@ -9,8 +9,6 @@ const pictureContainer = document.querySelector('.pictures');
 const pictureCancel = bigPicture.querySelector('#picture-cancel');
 const socialCommentCount = bigPicture.querySelector('.social__comment-count');
 const commentsLoader = bigPicture.querySelector('.comments-loader');
-const likesCount = bigPicture.querySelector('.likes-count');
-const bigPictureImg = bigPicture.querySelector('.big-picture__img');
 const partCommentsCount = socialCommentCount.querySelector('.part-comments-count');
 const commentsCount = socialCommentCount.querySelector('.comments-count');
 const commentsText = socialCommentCount.querySelector('.comments-text');
@@ -48,12 +46,6 @@ const setFullSizeModeClick = (data) => {
           }
         }
       };
-      if (Number(evt.target.parentElement.querySelector('.picture__likes').textContent) > data[getElementNumber()].likes ||
-          evt.target.parentElement.querySelector('.picture__likes').classList.contains('picture__likes-added')) {
-        likesCount.classList.add('likes-count--active');
-      } else {
-        likesCount.classList.remove('likes-count--active');
-      }
       bigPicture.querySelector('.social__caption').textContent = data[getElementNumber()].description;
       bigPicture.querySelector('.social__comments').innerHTML = '';
       data[getElementNumber()].comments.forEach(({avatar, name, message}) => {
@@ -68,12 +60,8 @@ const setFullSizeModeClick = (data) => {
             </li>`);
       });
       const comments = bigPicture.querySelectorAll('.social__comment');
-      if (Number(commentsCount.textContent[commentsCount.textContent.length - 1]) === 1 &&
-          Number(commentsCount.textContent[commentsCount.textContent.length - 2]) !== 1) {
-        commentsText.textContent = ' комментария';
-      } else {
-        commentsText.textContent = ' комментариев';
-      }
+      commentsText.textContent = (Number(commentsCount.textContent[commentsCount.textContent.length - 1]) === 1 &&
+      Number(commentsCount.textContent[commentsCount.textContent.length - 2]) !== 1) ? ' комментария' : ' комментариев';
       for (let j = 0; j < NUMBER_COMMENTS_DISPLAYED; j++) {
         if (comments[j] !== undefined) {
           comments[j].classList.remove('hidden');
@@ -86,35 +74,11 @@ const setFullSizeModeClick = (data) => {
       if (hiddenComments.length === 0) {
         commentsLoader.classList.add('hidden');
       }
-      likesCount.addEventListener('click', onLikesCountClick);
       commentsLoader.addEventListener('click', onCommentsLoaderClick);
     }
   };
 
   onPictureClickVariable = onPictureClick;
-
-  function onLikesCountClick () {
-    likesCount.classList.toggle('likes-count--active');
-    if (likesCount.classList.contains('likes-count--active')) {
-      likesCount.textContent = Number(likesCount.textContent) + 1;
-      for (let i = 0; i < pictures.length; i++) {
-        if (pictures[i].querySelector('.picture__img').src === bigPictureImg.querySelector('img').src) {
-          pictures[i].querySelector('.picture__likes').textContent = Number(pictures[i].querySelector('.picture__likes').textContent) + 1;
-          pictures[i].querySelector('.picture__likes').classList.add('picture__likes-added');
-          break;
-        }
-      }
-    } else {
-      likesCount.textContent = Number(likesCount.textContent) - 1;
-      for (let i = 0; i < pictures.length; i++) {
-        if (pictures[i].querySelector('.picture__img').src === bigPictureImg.querySelector('img').src) {
-          pictures[i].querySelector('.picture__likes').textContent = Number(pictures[i].querySelector('.picture__likes').textContent) - 1;
-          pictures[i].querySelector('.picture__likes').classList.remove('picture__likes-added');
-          break;
-        }
-      }
-    }
-  }
 
   function onCommentsLoaderClick () {
     const hiddenComments = bigPicture.querySelectorAll('.social__comment.hidden');
@@ -145,7 +109,6 @@ const setFullSizeModeClick = (data) => {
     }
     pictureCancel.removeEventListener('click', onPictureCancelClick);
     document.removeEventListener('keydown', onBigPictureEscKeydown);
-    likesCount.removeEventListener('click', onLikesCountClick);
     commentsLoader.removeEventListener('click', onCommentsLoaderClick);
   };
   function onPictureCancelClick () {
