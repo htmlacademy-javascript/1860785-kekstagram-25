@@ -1,7 +1,7 @@
 import {isEscapeKey} from './util.js';
 import {setData} from './server.js';
 
-const AVAILABLE_FILE_TYPES = ['jpeg', 'jpg', 'png'];
+const FILE_TYPES = ['jpeg', 'jpg', 'png'];
 const MAX_HASHTAGS_NUMBER = 5;
 const MIN_SCALE_CONTROL = 25;
 const MAX_SCALE_CONTROL = 100;
@@ -18,11 +18,12 @@ const scaleControlSmaller = form.querySelector('.scale__control--smaller');
 const scaleControlBigger = form.querySelector('.scale__control--bigger');
 const scaleControlValue = form.querySelector('.scale__control--value');
 const effectsList = form.querySelector('.effects__list');
-const effectLevelSlider = form.querySelector('.effect-level__slider');
-const effectLevelValue = form.querySelector('.effect-level__value');
 const effectNoneInput = form.querySelector('#effect-none');
 const selectedImg = form.querySelector('img');
 const submitButton = form.querySelector('.img-upload__submit');
+const sliderContainer = form.querySelector('.img-upload__effect-level');
+const effectLevelSlider = sliderContainer.querySelector('.effect-level__slider');
+const effectLevelValue = sliderContainer.querySelector('.effect-level__value');
 const selectedImgClassListIndex = selectedImg.classList.length;
 const regularExpression = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 
@@ -141,7 +142,7 @@ const onEffectsItemClick = (evt) => {
     switch (selectedImg.classList[selectedImgClassListIndex]) {
 
       case 'effects__preview--chrome':
-        effectLevelSlider.classList.remove('hidden');
+        sliderContainer.classList.remove('hidden');
         effectLevelSlider.noUiSlider.updateOptions({
           range: {
             min: 0,
@@ -153,7 +154,7 @@ const onEffectsItemClick = (evt) => {
         break;
 
       case 'effects__preview--sepia':
-        effectLevelSlider.classList.remove('hidden');
+        sliderContainer.classList.remove('hidden');
         effectLevelSlider.noUiSlider.updateOptions({
           range: {
             min: 0,
@@ -165,7 +166,7 @@ const onEffectsItemClick = (evt) => {
         break;
 
       case 'effects__preview--marvin':
-        effectLevelSlider.classList.remove('hidden');
+        sliderContainer.classList.remove('hidden');
         effectLevelSlider.noUiSlider.updateOptions({
           range: {
             min: 0,
@@ -177,7 +178,7 @@ const onEffectsItemClick = (evt) => {
         break;
 
       case 'effects__preview--phobos':
-        effectLevelSlider.classList.remove('hidden');
+        sliderContainer.classList.remove('hidden');
         effectLevelSlider.noUiSlider.updateOptions({
           range: {
             min: 0,
@@ -189,7 +190,7 @@ const onEffectsItemClick = (evt) => {
         break;
 
       case 'effects__preview--heat':
-        effectLevelSlider.classList.remove('hidden');
+        sliderContainer.classList.remove('hidden');
         effectLevelSlider.noUiSlider.updateOptions({
           range: {
             min: 1,
@@ -201,7 +202,7 @@ const onEffectsItemClick = (evt) => {
         break;
 
       default:
-        effectLevelSlider.classList.add('hidden');
+        sliderContainer.classList.add('hidden');
         selectedImg.style.filter='';
     }
   }
@@ -217,7 +218,7 @@ const unblockSubmitButton = () => {
   submitButton.textContent = 'Опубликовать';
 };
 
-const onSuccess = () => {
+const showSuccessMessage = () => {
 
   unblockSubmitButton();
   closeForm();
@@ -262,7 +263,7 @@ const onSuccess = () => {
   }
 };
 
-const onError = () => {
+const showErrorMessage = () => {
 
   unblockSubmitButton();
   closeForm();
@@ -313,7 +314,7 @@ const onFormSubmit = (evt) => {
   const isValid = pristine.validate();
   if (isValid) {
     blockSubmitButton();
-    setData(onSuccess, onError, new FormData(evt.target));
+    setData(showSuccessMessage, showErrorMessage, new FormData(evt.target));
   }
 };
 
@@ -326,7 +327,7 @@ uploadFile.addEventListener('change', () => {
   body.classList.add('modal-open');
   const file = uploadFile.files[0];
   const fileName = file.name.toLowerCase();
-  const matches = AVAILABLE_FILE_TYPES.some((it) => fileName.endsWith(it));
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
   if (matches) {
     selectedImg.src = URL.createObjectURL(file);
   }
@@ -335,7 +336,7 @@ uploadFile.addEventListener('change', () => {
   scaleControlSmaller.addEventListener('click', onScaleControlSmallerClick);
   scaleControlBigger.addEventListener('click', onScaleControlBiggerClick);
   if (effectNoneInput.checked) {
-    effectLevelSlider.classList.add('hidden');
+    sliderContainer.classList.add('hidden');
   }
   effectLevelSlider.noUiSlider.on('update', getSliderValue);
   effectsList.addEventListener('click', onEffectsItemClick);

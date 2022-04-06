@@ -47,9 +47,10 @@ const setFullSizeModeClick = (data) => {
         }
       };
       bigPicture.querySelector('.social__caption').textContent = data[getElementNumber()].description;
-      bigPicture.querySelector('.social__comments').innerHTML = '';
+      const socialComments = bigPicture.querySelector('.social__comments');
+      socialComments.innerHTML = '';
       data[getElementNumber()].comments.forEach(({avatar, name, message}) => {
-        bigPicture.querySelector('.social__comments').insertAdjacentHTML('beforeend', `
+        socialComments.insertAdjacentHTML('beforeend', `
             <li class="social__comment hidden">
               <img
                 class="social__picture"
