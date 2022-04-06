@@ -16,7 +16,7 @@ const picturesFragment = document.createDocumentFragment();
 
 const renderMiniatures = (photoDescriptions) => {
 
-  const toRender = (data) => {
+  const renderData = (data) => {
     document.querySelectorAll('.picture').forEach((item) => {
       item.remove();
     });
@@ -31,7 +31,7 @@ const renderMiniatures = (photoDescriptions) => {
     setFullSizeModeClick(data);
   };
 
-  toRender(photoDescriptions);
+  renderData(photoDescriptions);
   imgFiltersContainer.classList.remove('img-filters--inactive');
 
   let filteredData;
@@ -75,10 +75,10 @@ const renderMiniatures = (photoDescriptions) => {
     });
   };
 
-  setFilterClick(debounce(() => toRender(filteredData), RENDER_DELAY));
+  setFilterClick(debounce(() => renderData(filteredData), RENDER_DELAY));
 };
 
-const onErrorDataDownload = () => {
+const showErrorMessage = () => {
 
   body.insertAdjacentHTML('beforeend', `
     <section class="error">
@@ -119,4 +119,4 @@ const onErrorDataDownload = () => {
   }
 };
 
-export {renderMiniatures, onErrorDataDownload};
+export {renderMiniatures, showErrorMessage};
